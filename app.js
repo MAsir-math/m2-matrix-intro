@@ -1,4 +1,4 @@
-/* 矩陣入門實驗室 — 馬Sir教室 · 中五 M2 · §11.1 */
+/* 矩陣入門實驗室 — 馬Sir教室 · 中五 M2 · 第 11 章 */
 (function () {
   "use strict";
 
@@ -254,6 +254,7 @@
   const INTRO = [["15", "16", "14"], ["5", "4", "6"]];
 
   const state = {
+    chapter: "11.1",
     mode: "read",
     item: "intro",
     rows: 2,
@@ -507,6 +508,28 @@
     return EQUAL_ITEMS;
   }
 
+  function show11_1Chrome() {
+    const m111 = document.getElementById("modes-111");
+    const m112 = document.getElementById("modes-112");
+    if (m111) m111.hidden = false;
+    if (m112) m112.hidden = true;
+    const n1 = document.getElementById("notes-111");
+    const n2 = document.getElementById("notes-112");
+    if (n1) n1.hidden = false;
+    if (n2) n2.hidden = true;
+    const sub = document.getElementById("brand-sub");
+    if (sub) sub.textContent = "馬Sir教室 · 中五 M2 · §11.1 矩陣";
+    document.querySelectorAll("#chapters [data-chapter]").forEach((btn) => {
+      btn.setAttribute("aria-selected", btn.getAttribute("data-chapter") === "11.1" ? "true" : "false");
+    });
+  }
+
+  function enter11_1() {
+    state.chapter = "11.1";
+    show11_1Chrome();
+    setMode("read", "intro");
+  }
+
   function setMode(mode, item, fromHash) {
     if (state.mode !== mode) {
       state.mode = mode;
@@ -553,6 +576,20 @@
 
   function applyHash() {
     const raw = (location.hash || "").replace(/^#/, "");
+    if (raw === "ch11.1") {
+      state.chapter = "11.1";
+      show11_1Chrome();
+      setMode("read", "intro", true);
+      return;
+    }
+    if (window.LabOps && window.LabOps.hasHash(raw)) {
+      state.chapter = "11.2";
+      window.LabOps.apply(raw);
+      window.LabOps.render();
+      return;
+    }
+    state.chapter = "11.1";
+    show11_1Chrome();
     if (!raw) {
       setMode("read", "intro", true);
       return;
@@ -1437,6 +1474,11 @@
   }
 
   function render() {
+    if (state.chapter === "11.2" && window.LabOps) {
+      window.LabOps.render();
+      return;
+    }
+    show11_1Chrome();
     document.querySelectorAll(".modes [data-mode]").forEach((btn) => {
       btn.setAttribute("aria-selected", btn.getAttribute("data-mode") === state.mode ? "true" : "false");
     });
@@ -1466,9 +1508,25 @@
 
   function init() {
     bind();
-    applyHash();
-    if (!location.hash) syncHash();
+    const start = function () {
+      if (window.LabOps) window.LabOps.bind();
+      applyHash();
+      if (!location.hash) syncHash();
+    };
+    if (window.LabOps) start();
+    else setTimeout(start, 0);
   }
+
+  window.LabUI = {
+    els: els,
+    state: state,
+    namedMatrix: namedMatrix,
+    buildMatrix: buildMatrix,
+    typeset: typeset,
+    button: button,
+    texSpan: texSpan,
+    enter11_1: enter11_1,
+  };
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);

@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#ebe6dc">
-<meta name="description" content="中五 M2 §11.1 矩陣入門實驗室：讀階與元素、辨認特殊矩陣、矩陣相等。馬Sir教室課堂投影頁，不收集學生資料。">
-<title>矩陣入門實驗室｜馬Sir教室 · 中五 M2 · §11.1</title>
+<meta name="description" content="中五 M2 第 11 章矩陣入門實驗室：定義、特殊矩陣、相等，以及矩陣的運算。馬Sir教室課堂投影頁，不收集學生資料。">
+<title>矩陣入門實驗室｜馬Sir教室 · 中五 M2 · 第 11 章</title>
 <!--
   KaTeX (MIT) and Noto Sans TC via jsDelivr, suitable for Hong Kong classroom networks.
   Fallback (comment only):
@@ -528,6 +528,43 @@ input, textarea { caret-color: var(--accent); }
 
 .katex { font-size: 1.05em; }
 
+
+.chapters {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-right: 4px;
+}
+.chapters button {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 700;
+}
+.chapters button[aria-selected="true"] {
+  background: var(--accent);
+  color: #f6f3eb;
+  border-color: var(--accent);
+}
+.chapters button:hover { color: var(--ink); }
+.chapters button[aria-selected="true"]:hover { color: #f6f3eb; }
+.undef {
+  padding: 10px 14px;
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-line);
+  border-radius: var(--radius-sm);
+  color: var(--warn-ink);
+  font-weight: 700;
+}
+.op-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.given-row { display: flex; flex-wrap: wrap; gap: 18px 28px; align-items: center; margin: 8px 0; }
+.task { margin: 10px 0; }
+
 @media (max-width: 820px) {
   .app { padding: 12px 14px 24px; }
   .workspace.split { grid-template-columns: 1fr; }
@@ -556,14 +593,27 @@ input, textarea { caret-color: var(--accent); }
         </svg>
         <div class="brand-text">
           <h1>矩陣入門實驗室</h1>
-          <p class="sub">馬Sir教室 · 中五 M2 · §11.1 矩陣</p>
+          <p class="sub" id="brand-sub">馬Sir教室 · 中五 M2 · §11.1 矩陣</p>
         </div>
       </div>
       <div class="top-actions">
-        <div class="modes" role="tablist" aria-label="模式">
+        <div class="chapters" role="tablist" aria-label="章節" id="chapters">
+          <button type="button" data-chapter="11.1" aria-selected="true">§11.1 矩陣</button>
+          <button type="button" data-chapter="11.2" aria-selected="false">§11.2 矩陣的運算</button>
+        </div>
+        <div class="modes" role="tablist" aria-label="模式" id="modes-111">
           <button type="button" role="tab" id="tab-read" data-mode="read" aria-selected="true" aria-controls="stage">A 讀矩陣</button>
           <button type="button" role="tab" id="tab-identify" data-mode="identify" aria-selected="false" aria-controls="stage">B 辨認特殊矩陣</button>
           <button type="button" role="tab" id="tab-equal" data-mode="equal" aria-selected="false" aria-controls="stage">C 矩陣相等</button>
+        </div>
+        <div class="modes" role="tablist" aria-label="模式" id="modes-112" hidden>
+          <button type="button" role="tab" data-ops="ops" aria-selected="true" aria-controls="stage">運算示範</button>
+          <button type="button" role="tab" data-ops="add" aria-selected="false" aria-controls="stage">加減法</button>
+          <button type="button" role="tab" data-ops="scalar" aria-selected="false" aria-controls="stage">純量乘法</button>
+          <button type="button" role="tab" data-ops="mul" aria-selected="false" aria-controls="stage">矩陣乘法</button>
+          <button type="button" role="tab" data-ops="power" aria-selected="false" aria-controls="stage">矩陣的冪</button>
+          <button type="button" role="tab" data-ops="exer11A" aria-selected="false" aria-controls="stage">練習 11A</button>
+          <button type="button" role="tab" data-ops="exer11B" aria-selected="false" aria-controls="stage">練習 11B</button>
         </div>
         <button type="button" class="notes-btn" id="notes-btn" aria-pressed="false" aria-controls="notes">課堂提示</button>
       </div>
@@ -571,7 +621,7 @@ input, textarea { caret-color: var(--accent); }
 
     <aside class="notes" id="notes" hidden>
       <h2>課堂提示</h2>
-      <ul>
+      <ul id="notes-111">
         <li>把「m×n 矩陣」讀作「m 行 n 列矩陣」。先數行、再數列；a<sub>ij</sub> 在第 i 行、第 j 列。</li>
         <li>1×1 矩陣寫成 (α)，不要寫成不帶括號的純量。</li>
         <li>2×3 與 3×2 是不同的階，兩個矩陣不可能相等。</li>
@@ -579,17 +629,26 @@ input, textarea { caret-color: var(--accent); }
         <li>單位矩陣是主對角線元素均是 1 的對角矩陣；全部是 1 的方矩陣不是單位矩陣。</li>
         <li>判斷兩個矩陣是否相等：先比較階，階相同才比較每一個對應元素。列出方程後，先解最簡單的那一條；兩邊相同的式子只作核對，不必再求未知數。</li>
       </ul>
+      <ul id="notes-112" hidden>
+        <li>矩陣的加減法要求兩個矩陣的階相同，否則和與差都是未定義的。</li>
+        <li>純量乘法：kA 是把 A 的每一個元素乘以純量 k。特別地，−A＝(−1)A。</li>
+        <li>只有當 A 的列數等於 B 的行數時，AB 才有定義，而且 (m×n)(n×p)＝m×p。</li>
+        <li>一般來說，矩陣乘法沒有交換性質，即 AB 不必等於 BA。AB＝0 也不表示 A＝0 或 B＝0。</li>
+        <li>1 是一個數，但 (1) 是一個 1×1 矩陣，兩者不同。</li>
+        <li>方矩陣的 n 次冪 A<sup>n</sup> 是 n 個 A 相乘。一般來說 (A＋B)<sup>2</sup>≠A<sup>2</sup>＋2AB＋B<sup>2</sup>。</li>
+      </ul>
     </aside>
 
     <nav class="item-bar" id="items" aria-label="題目"></nav>
     <main class="stage" id="stage" role="tabpanel"></main>
 
     <p class="footer">
-      本頁為課堂互動工具，只涵蓋矩陣的定義、特殊矩陣與相等性，不收集學生資料。
+      本頁為課堂互動工具，涵蓋矩陣的定義、特殊矩陣、相等性與矩陣的運算，不收集學生資料。
       數學式由 <a href="https://katex.org/" target="_blank" rel="noopener">KaTeX</a>（MIT）排版。馬Sir教室
     </p>
   </div>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+  <script defer src="ops.js"></script>
   <script defer src="app.js"></script>
 </body>
 </html>

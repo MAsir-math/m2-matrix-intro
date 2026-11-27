@@ -513,18 +513,22 @@
     const m112 = document.getElementById("modes-112");
     const m113 = document.getElementById("modes-113");
     const m114 = document.getElementById("modes-114");
+    const m115 = document.getElementById("modes-115");
     if (m111) m111.hidden = false;
     if (m112) m112.hidden = true;
     if (m113) m113.hidden = true;
     if (m114) m114.hidden = true;
+    if (m115) m115.hidden = true;
     const n1 = document.getElementById("notes-111");
     const n2 = document.getElementById("notes-112");
     const n3 = document.getElementById("notes-113");
     const n4 = document.getElementById("notes-114");
+    const n5 = document.getElementById("notes-115");
     if (n1) n1.hidden = false;
     if (n2) n2.hidden = true;
     if (n3) n3.hidden = true;
     if (n4) n4.hidden = true;
+    if (n5) n5.hidden = true;
     const sub = document.getElementById("brand-sub");
     if (sub) sub.textContent = "馬Sir教室 · 中五 M2 · §11.1 矩陣";
     document.querySelectorAll("#chapters [data-chapter]").forEach((btn) => {
@@ -588,6 +592,12 @@
       state.chapter = "11.1";
       show11_1Chrome();
       setMode("read", "intro", true);
+      return;
+    }
+    if (window.LabAdj && window.LabAdj.hasHash(raw)) {
+      state.chapter = "11.5";
+      window.LabAdj.apply(raw);
+      window.LabAdj.render();
       return;
     }
     if (window.LabInv && window.LabInv.hasHash(raw)) {
@@ -1494,6 +1504,10 @@
   }
 
   function render() {
+    if (state.chapter === "11.5" && window.LabAdj) {
+      window.LabAdj.render();
+      return;
+    }
     if (state.chapter === "11.4" && window.LabInv) {
       window.LabInv.render();
       return;
@@ -1523,7 +1537,11 @@
     document.querySelectorAll("#chapters [data-chapter]").forEach((btn) => {
       btn.addEventListener("click", () => {
         const ch = btn.getAttribute("data-chapter");
-        if (ch === "11.4" && window.LabInv) {
+        if (ch === "11.5" && window.LabAdj) {
+          state.chapter = "11.5";
+          window.LabAdj.apply("adj");
+          window.LabAdj.render();
+        } else if (ch === "11.4" && window.LabInv) {
           state.chapter = "11.4";
           window.LabInv.apply("inv");
           window.LabInv.render();
@@ -1560,10 +1578,11 @@
       if (window.LabOps) window.LabOps.bind();
       if (window.LabDet) window.LabDet.bind();
       if (window.LabInv) window.LabInv.bind();
+      if (window.LabAdj) window.LabAdj.bind();
       applyHash();
       if (!location.hash) syncHash();
     };
-    if (window.LabOps || window.LabDet || window.LabInv) start();
+    if (window.LabOps || window.LabDet || window.LabInv || window.LabAdj) start();
     else setTimeout(start, 0);
   }
 

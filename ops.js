@@ -968,12 +968,16 @@
     if (m113) m113.hidden = true;
     const m114 = document.getElementById("modes-114");
     if (m114) m114.hidden = true;
+    const m115 = document.getElementById("modes-115");
+    if (m115) m115.hidden = true;
     document.getElementById("notes-111").hidden = true;
     document.getElementById("notes-112").hidden = false;
     const n113 = document.getElementById("notes-113");
     if (n113) n113.hidden = true;
     const n114 = document.getElementById("notes-114");
     if (n114) n114.hidden = true;
+    const n115 = document.getElementById("notes-115");
+    if (n115) n115.hidden = true;
     document.getElementById("brand-sub").textContent = "馬Sir教室 · 中五 M2 · §11.2 矩陣的運算";
     document.querySelectorAll("#chapters [data-chapter]").forEach((b) => {
       b.setAttribute("aria-selected", b.getAttribute("data-chapter") === "11.2" ? "true" : "false");

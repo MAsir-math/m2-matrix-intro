@@ -498,12 +498,44 @@ const publicSrc = readFileSync(new URL("./index.html", import.meta.url), "utf8")
   readFileSync(new URL("./ops.js", import.meta.url), "utf8") +
   readFileSync(new URL("./det.js", import.meta.url), "utf8") +
   readFileSync(new URL("./inv.js", import.meta.url), "utf8") +
+  readFileSync(new URL("./adj.js", import.meta.url), "utf8") +
   readFileSync(new URL("./README.md", import.meta.url), "utf8");
-for (const forbidden of ["轉置", "伴隨", "AI=IA", "教師版", "教師專用", "T.28", "T.30", "T.31", "T.32", "T.33", "T.34", "T.35", "\u5e42", "\u966a\u96a8"]) {
+for (const forbidden of ["AI=IA", "教師版", "教師專用", "T.28", "T.30", "T.31", "T.32", "T.33", "T.34", "T.35", "\u5e42", "\u966a\u96a8"]) {
   assert.equal(publicSrc.includes(forbidden), false, "forbidden: " + forbidden);
 }
-for (const need of ["A 讀矩陣", "B 辨認特殊矩陣", "C 矩陣相等", "加減法", "純量乘法", "矩陣乘法", "矩陣的冪", "練習 11A", "練習 11B", "行列式", "子行列式", "餘因式", "餘因式展式", "練習 11C", "逆矩陣", "練習 11D", "方矩陣的逆矩陣", "非奇異", "奇異"]) {
+for (const need of ["A 讀矩陣", "B 辨認特殊矩陣", "C 矩陣相等", "加減法", "純量乘法", "矩陣乘法", "矩陣的冪", "練習 11A", "練習 11B", "行列式", "子行列式", "餘因式", "餘因式展式", "練習 11C", "逆矩陣", "練習 11D", "方矩陣的逆矩陣", "非奇異", "奇異", "§11.5 計算逆矩陣", "轉置矩陣", "伴隨矩陣", "練習 11E"]) {
   assert.equal(publicSrc.includes(need), true, "missing: " + need);
 }
+
+
+function a15det2(A){return A[0][0]*A[1][1]-A[0][1]*A[1][0];}
+function a15det3(A){const [[a,b,c],[d,e,f],[g,h,i]]=A;return a*e*i+b*f*g+c*d*h-c*e*g-a*f*h-b*d*i;}
+function a15T(A){return A[0].map((_,j)=>A.map(r=>r[j]));}
+function a15minor(A,i,j){return A.filter((_,r)=>r!==i).map(row=>row.filter((_,c)=>c!==j));}
+function a15cof(A,i,j){const m=a15minor(A,i,j);const d=m.length===1?m[0][0]:a15det2(m);return ((i+j)%2===0?1:-1)*d;}
+function a15adj(A){return a15T(A.map((row,i)=>row.map((_,j)=>a15cof(A,i,j))));}
+function a15mul(A,B){return A.map((row,i)=>B[0].map((_,j)=>row.reduce((s,_,k)=>s+A[i][k]*B[k][j],0)));}
+function a15scale(k,A){return A.map(row=>row.map(v=>k*v));}
+function a15near(A,B){return A.every((row,i)=>row.every((v,j)=>Math.abs(v-B[i][j])<1e-8));}
+function a15inv(A){const d=A.length===2?a15det2(A):a15det3(A);return a15scale(1/d,a15adj(A));}
+
+assert.deepEqual(a15T([[1,2,3],[4,5,6]]), [[1,4],[2,5],[3,6]]);
+assert.deepEqual(a15T([[4,1,3],[0,-1,5],[-7,6,2]]), [[4,0,-7],[1,-1,6],[3,5,2]]);
+assert.ok(a15near(a15adj([[2,3],[5,6]]), [[6,-3],[-5,2]]));
+assert.ok(a15near(a15adj([[1,0,4],[-2,3,0],[1,2,-1]]), [[-3,8,-12],[-2,-5,-8],[-7,-2,3]]));
+assert.ok(a15near(a15adj([[3,1],[2,4]]), [[4,-1],[-2,3]]));
+assert.ok(a15near(a15adj([[1,2,-1],[0,-1,-4],[-2,2,1]]), [[7,-4,-9],[8,-1,4],[-2,-6,-1]]));
+assert.equal(a15det3([[0,1,2],[-1,1,1],[2,0,-1]]), -3);
+assert.ok(a15near(a15inv([[0,1,2],[-1,1,1],[2,0,-1]]), [[1/3,-1/3,1/3],[-1/3,4/3,2/3],[2/3,-2/3,-1/3]]));
+assert.ok(a15near(a15inv([[0,-1,3],[-2,-1,2],[3,1,-1]]), [[1,-2,-1],[-4,9,6],[-1,3,2]]));
+assert.ok(a15near(a15inv([[3,-1,-4],[4,3,-2],[-1,1,2]]), [[4,-1,7],[-3,1,-5],[7/2,-1,13/2]]));
+assert.ok(a15near(a15inv([[1,0,3],[2,1,2],[4,2,5]]), [[1,6,-3],[-2,-7,4],[0,-2,1]]));
+assert.ok(a15near(a15inv([[2,0,1],[1,1,0],[0,3,2]]), [[2/7,3/7,-1/7],[-2/7,4/7,1/7],[3/7,-6/7,2/7]]));
+assert.ok(a15near(a15inv([[1,2,1],[0,1,1],[3,2,0]]), [[-2,2,1],[3,-3,-1],[-3,4,1]]));
+assert.ok(a15near(a15inv([[2,-4,-9],[4,-9,-6],[1,-2,-3]]), [[-5,-2,19],[-2,-1,8],[-1/3,0,2/3]]));
+assert.ok(a15near(a15inv([[0,-3,-1],[-1,-3,1],[-2,5,5]]), [[-10,5,-3],[3/2,-1,1/2],[-11/2,3,-3/2]]));
+assert.equal(a15det3([[1,6,8],[1,4,5],[0,2,3]]), 0);
+assert.ok(a15near(a15inv([[-3,-4],[0,1]]), [[-1/3,-4/3],[0,1]]));
+console.log("§11.5 arithmetic ok");
 
 console.log("all checks passed");

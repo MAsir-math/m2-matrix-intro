@@ -994,7 +994,7 @@
   }
 
   function hideOther(on) {
-    ["111", "112", "113", "114"].forEach((id) => {
+    ["111", "112", "113", "114", "115"].forEach((id) => {
       const m = document.getElementById("modes-" + id);
       const n = document.getElementById("notes-" + id);
       if (m) m.hidden = id !== on;

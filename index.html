@@ -641,6 +641,7 @@ input, textarea { caret-color: var(--accent); }
           <button type="button" data-chapter="11.2" aria-selected="false">§11.2 矩陣的運算</button>
           <button type="button" data-chapter="11.3" aria-selected="false">§11.3 行列式</button>
           <button type="button" data-chapter="11.4" aria-selected="false">§11.4 方矩陣的逆矩陣</button>
+          <button type="button" data-chapter="11.5" aria-selected="false">§11.5 計算逆矩陣</button>
         </div>
         <div class="modes" role="tablist" aria-label="模式" id="modes-111">
           <button type="button" role="tab" id="tab-read" data-mode="read" aria-selected="true" aria-controls="stage">A 讀矩陣</button>
@@ -672,6 +673,14 @@ input, textarea { caret-color: var(--accent); }
           <button type="button" role="tab" data-inv="inv-ex" aria-selected="false" aria-controls="stage">例題與課堂練習</button>
           <button type="button" role="tab" data-inv="exer11D" aria-selected="false" aria-controls="stage">練習 11D</button>
           <button type="button" role="tab" data-inv="assess11.4" aria-selected="false" aria-controls="stage">階段評估 11.4</button>
+        </div>
+        <div class="modes" role="tablist" aria-label="模式" id="modes-115" hidden>
+          <button type="button" role="tab" data-adj="adj" aria-selected="true" aria-controls="stage">計算逆矩陣示範</button>
+          <button type="button" role="tab" data-adj="transpose" aria-selected="false" aria-controls="stage">轉置矩陣</button>
+          <button type="button" role="tab" data-adj="detprop" aria-selected="false" aria-controls="stage">行列式的性質</button>
+          <button type="button" role="tab" data-adj="adjugate" aria-selected="false" aria-controls="stage">伴隨矩陣</button>
+          <button type="button" role="tab" data-adj="exer11E" aria-selected="false" aria-controls="stage">練習 11E</button>
+          <button type="button" role="tab" data-adj="assess11.5" aria-selected="false" aria-controls="stage">階段評估 11.5</button>
         </div>
         <button type="button" class="notes-btn" id="notes-btn" aria-pressed="false" aria-controls="notes">課堂提示</button>
       </div>
@@ -713,13 +722,23 @@ input, textarea { caret-color: var(--accent); }
         <li>(A<sup>k</sup>)<sup>−1</sup>＝(A<sup>−1</sup>)<sup>k</sup>。</li>
         <li>由矩陣恆等式求逆時，把式子整理成 A 乘某個矩陣等於 I。小心：矩陣與純量之和是未定義的，例如 A<sup>2</sup>−5A≠A(A−5)。</li>
       </ul>
+      <ul id="notes-115" hidden>
+        <li>轉置矩陣 A<sup>T</sup> 是把 A 的行和對應的列交換而得。若 A 是 m×n 矩陣，則 A<sup>T</sup> 是 n×m 矩陣。</li>
+        <li>(AB)<sup>T</sup>＝B<sup>T</sup>A<sup>T</sup>。一般來說 (AB)<sup>T</sup>≠A<sup>T</sup>B<sup>T</sup>。</li>
+        <li>有關矩陣運算的行列式性質（本課程只學 2 階和 3 階）：|I<sub>n</sub>|＝1；|AB|＝|A||B|；若 A 為非奇異的，則 |A|≠0 及 |A<sup>−1</sup>|＝1/|A|。由後者亦可得 |AB|＝|BA| 及 |A<sup>m</sup>|＝|A|<sup>m</sup>。</li>
+        <li>一般來說 |A＋B|≠|A|＋|B|，且 |kA|≠k|A|。</li>
+        <li>伴隨矩陣 adj A 是把各元素的餘因式排成矩陣後再轉置而得。求各餘因式後，必須再轉置。</li>
+        <li>若 |A|≠0，則 A 為非奇異的，且 A<sup>−1</sup>＝(1/|A|) adj A。這是本章計算逆矩陣的主要方法。若 |A|＝0，A 是奇異的，逆矩陣未定義。</li>
+        <li>對 2×2 矩陣 A＝[[a,b],[c,d]]，adj A＝[[d,−b],[−c,a]]；若 ad−bc≠0，則 A<sup>−1</sup>＝(1/(ad−bc)) adj A。</li>
+        <li>本課程只學 2 階和 3 階。</li>
+      </ul>
     </aside>
 
     <nav class="item-bar" id="items" aria-label="題目"></nav>
     <main class="stage" id="stage" role="tabpanel"></main>
 
     <p class="footer">
-      本頁為課堂互動工具，涵蓋矩陣的定義、特殊矩陣、相等性、矩陣的運算、行列式與方矩陣的逆矩陣，不收集學生資料。
+      本頁為課堂互動工具，涵蓋矩陣的定義、特殊矩陣、相等性、矩陣的運算、行列式、方矩陣的逆矩陣，以及轉置矩陣、伴隨矩陣與計算逆矩陣，不收集學生資料。
       數學式由 <a href="https://katex.org/" target="_blank" rel="noopener">KaTeX</a>（MIT）排版。馬Sir教室
     </p>
   </div>
@@ -727,6 +746,7 @@ input, textarea { caret-color: var(--accent); }
   <script defer src="ops.js"></script>
   <script defer src="det.js"></script>
   <script defer src="inv.js"></script>
+  <script defer src="adj.js"></script>
   <script defer src="app.js"></script>
 </body>
 </html>

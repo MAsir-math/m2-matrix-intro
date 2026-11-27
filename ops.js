@@ -964,8 +964,12 @@
     const L = ui();
     document.getElementById("modes-111").hidden = true;
     document.getElementById("modes-112").hidden = false;
+    const m113 = document.getElementById("modes-113");
+    if (m113) m113.hidden = true;
     document.getElementById("notes-111").hidden = true;
     document.getElementById("notes-112").hidden = false;
+    const n113 = document.getElementById("notes-113");
+    if (n113) n113.hidden = true;
     document.getElementById("brand-sub").textContent = "馬Sir教室 · 中五 M2 · §11.2 矩陣的運算";
     document.querySelectorAll("#chapters [data-chapter]").forEach((b) => {
       b.setAttribute("aria-selected", b.getAttribute("data-chapter") === "11.2" ? "true" : "false");
@@ -1031,22 +1035,6 @@
   }
 
   function bind() {
-    document.querySelectorAll("#chapters [data-chapter]").forEach((b) => {
-      b.addEventListener("click", () => {
-        const ch = b.getAttribute("data-chapter");
-        if (ch === "11.2") {
-          window.LabUI.state.chapter = "11.2";
-          opsState.group = "ops";
-          opsState.item = "ops";
-          sync();
-          renderOps();
-        } else {
-          window.LabUI.state.chapter = "11.1";
-          history.replaceState(null, "", "#read");
-          window.LabUI.enter11_1();
-        }
-      });
-    });
     document.querySelectorAll("#modes-112 [data-ops]").forEach((b) => {
       b.addEventListener("click", () => {
         const g = b.getAttribute("data-ops");

@@ -336,14 +336,72 @@ assert.equal(3, -(-3));
 console.log("§11.2 arithmetic ok");
 
 // Guard: public files
+// §11.3 determinants
+function det2(A){return A[0][0]*A[1][1]-A[0][1]*A[1][0];}
+function det3(A){
+  const [[a,b,c],[d,e,f],[g,h,i]]=A;
+  return a*e*i+b*f*g+c*d*h-c*e*g-a*f*h-b*d*i;
+}
+function nearlyN(a,b,msg){assert.ok(Math.abs(a-b)<1e-9, (msg||"")+` ${a} vs ${b}`);}
+nearlyN(det2([[1,0],[0,1]]),1);
+nearlyN(det2([[0,0],[1,3]]),0);
+nearlyN(det2([[-3,2],[-1,4]]),-10);
+nearlyN(det2([[5,0],[0,3]]),15);
+nearlyN(det2([[0,4],[3,-1]]),-12);
+nearlyN(det2([[2,3],[-7,-1]]),19);
+nearlyN(det2([[9,4],[7,3]]),-1);
+nearlyN(det2([[-1,0],[0,-1]]),1);
+nearlyN(det2([[5,0],[8,0]]),0);
+nearlyN(det2([[-3,-1],[4,2]]),-2);
+// 例 11.13
+{ const x=4; nearlyN((2-4*x)*(-10)-(-5)*(-7*x),0); }
+{ const xs=[7/6,-3]; xs.forEach(x=>nearlyN((3*x-7)*(2*x+3)-(-8*x)*2,0,"ex11.13b")); }
+{ const x=1; nearlyN(2*(1-x)-(-1)*x,x,"qp11.13a"); }
+{ const x=5/7; nearlyN((5*x+9)*6-8*(9*x+3),0,"qp11.13b"); }
+nearlyN(det3([[9,-1,8],[6,-2,7],[-3,1,-4]]),6);
+nearlyN(det3([[1,0,-2],[2,4,0],[3,-1,1]]),32);
+nearlyN(det3([[0,5,-8],[2,6,2],[0,-2,4]]),-8);
+nearlyN(det3([[1,0,3],[0,-1,1],[1,0,-2]]),5);
+nearlyN(det3([[0,-6,-7],[0,3,5],[-2,9,8]]),18);
+nearlyN(det3([[2,4,0],[11,3,2],[1,-2,1]]),-22);
+nearlyN(det3([[1,10,-1],[4,0,0],[3,0,-5]]),200);
+// minors 例 11.14
+nearlyN(det2([[2,5],[4,1]]),-18);
+nearlyN(-det2([[1,-1],[3,4]]),-7);
+nearlyN(det2([[3,0],[5,-1]]),-3);
+nearlyN(det2([[-1,2],[-1,-3]]),5);
+nearlyN(det2([[1,2],[5,-3]]),-13);
+nearlyN(-det2([[1,2],[3,4]]),2);
+nearlyN(det2([[1,2],[1,7]]),5);
+nearlyN(det2([[0,2],[2,3]]),-4);
+// 練習 11C
+nearlyN(det2([[7,0],[-4,0]]),0);
+nearlyN(det2([[4,-1],[3,2]]),11);
+nearlyN(det2([[5,3],[-4,-7]]),-23);
+nearlyN(det3([[1,2,0],[2,-2,1],[0,3,-3]]),15);
+nearlyN(det3([[4,3,3],[2,0,-1],[2,1,1]]),-2);
+nearlyN(det3([[-4,2,-5],[1,2,-1],[3,-2,1]]),32);
+nearlyN(det3([[0,2,1],[1,15,6],[0,3,4]]),-5);
+nearlyN(det3([[2,0,-3],[3,1,4],[5,1,-2]]),-6);
+nearlyN(det3([[3,6,7],[3,5,3],[1,2,1]]),4);
+nearlyN(det2([[2,3],[2,6]]),6);
+nearlyN(det2([[2,2],[5,6]]),2);
+nearlyN(-det2([[2,2],[11,0]]),22);
+nearlyN(-det2([[3,2],[2,6]]),-14);
+nearlyN(det3([[2,0,0],[2,3,0],[-1,1,1]]),6);
+nearlyN(det3([[2,3,2],[-1,1,9],[1,2,3]]),0);
+nearlyN((-2)**7,-128);
+console.log("§11.3 arithmetic ok");
+
 const publicSrc = readFileSync(new URL("./index.html", import.meta.url), "utf8") +
   readFileSync(new URL("./app.js", import.meta.url), "utf8") +
   readFileSync(new URL("./ops.js", import.meta.url), "utf8") +
+  readFileSync(new URL("./det.js", import.meta.url), "utf8") +
   readFileSync(new URL("./README.md", import.meta.url), "utf8");
-for (const forbidden of ["行列式", "逆矩陣", "轉置", "伴隨", "AI=IA", "教師版", "T.28", "T.30", "T.31", "\u5e42", "\u966a\u96a8"]) {
+for (const forbidden of ["逆矩陣", "轉置", "伴隨", "AI=IA", "教師版", "T.28", "T.30", "T.31", "T.32", "T.33", "\u5e42", "\u966a\u96a8"]) {
   assert.equal(publicSrc.includes(forbidden), false, "forbidden: " + forbidden);
 }
-for (const need of ["A 讀矩陣", "B 辨認特殊矩陣", "C 矩陣相等", "加減法", "純量乘法", "矩陣乘法", "矩陣的冪", "練習 11A", "練習 11B"]) {
+for (const need of ["A 讀矩陣", "B 辨認特殊矩陣", "C 矩陣相等", "加減法", "純量乘法", "矩陣乘法", "矩陣的冪", "練習 11A", "練習 11B", "行列式", "子行列式", "餘因式", "餘因式展式", "練習 11C"]) {
   assert.equal(publicSrc.includes(need), true, "missing: " + need);
 }
 

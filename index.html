@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#ebe6dc">
-<meta name="description" content="中五 M2 第 11 章矩陣入門實驗室：定義、特殊矩陣、相等，以及矩陣的運算。馬Sir教室課堂投影頁，不收集學生資料。">
+<meta name="description" content="中五 M2 第 11 章矩陣入門實驗室：定義、特殊矩陣、相等、矩陣的運算與行列式。馬Sir教室課堂投影頁，不收集學生資料。">
 <title>矩陣入門實驗室｜馬Sir教室 · 中五 M2 · 第 11 章</title>
 <!--
   KaTeX (MIT) and Noto Sans TC via jsDelivr, suitable for Hong Kong classroom networks.
@@ -553,6 +553,45 @@ input, textarea { caret-color: var(--accent); }
 }
 .chapters button:hover { color: var(--ink); }
 .chapters button[aria-selected="true"]:hover { color: #f6f3eb; }
+
+.det {
+  display: inline-grid;
+  grid-template-columns: 5px auto 5px;
+  align-items: stretch;
+  width: max-content;
+  gap: 0 2px;
+}
+.det .bar {
+  background: var(--ink);
+  width: 3px;
+  border-radius: 1px;
+}
+.det table { border-collapse: collapse; }
+.det td {
+  min-width: 52px;
+  min-height: 44px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  padding: 4px 8px;
+  position: relative;
+}
+.det td button.cell {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  min-width: 48px;
+  min-height: 40px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.det td button.cell:hover { background: var(--hl); }
+.det td.hi { background: var(--hl); }
+.det td.dim { opacity: 0.28; }
+.det td.pick { background: var(--hl-strong); font-weight: 700; }
+.sign-row { display: inline-flex; gap: 2px; font-weight: 700; letter-spacing: 0.4em; }
+
 .undef {
   padding: 10px 14px;
   background: var(--warn-bg);
@@ -600,6 +639,7 @@ input, textarea { caret-color: var(--accent); }
         <div class="chapters" role="tablist" aria-label="章節" id="chapters">
           <button type="button" data-chapter="11.1" aria-selected="true">§11.1 矩陣</button>
           <button type="button" data-chapter="11.2" aria-selected="false">§11.2 矩陣的運算</button>
+          <button type="button" data-chapter="11.3" aria-selected="false">§11.3 行列式</button>
         </div>
         <div class="modes" role="tablist" aria-label="模式" id="modes-111">
           <button type="button" role="tab" id="tab-read" data-mode="read" aria-selected="true" aria-controls="stage">A 讀矩陣</button>
@@ -614,6 +654,15 @@ input, textarea { caret-color: var(--accent); }
           <button type="button" role="tab" data-ops="power" aria-selected="false" aria-controls="stage">矩陣的冪</button>
           <button type="button" role="tab" data-ops="exer11A" aria-selected="false" aria-controls="stage">練習 11A</button>
           <button type="button" role="tab" data-ops="exer11B" aria-selected="false" aria-controls="stage">練習 11B</button>
+        </div>
+        <div class="modes" role="tablist" aria-label="模式" id="modes-113" hidden>
+          <button type="button" role="tab" data-det="det" aria-selected="true" aria-controls="stage">行列式示範</button>
+          <button type="button" role="tab" data-det="det2" aria-selected="false" aria-controls="stage">2 階行列式</button>
+          <button type="button" role="tab" data-det="det3" aria-selected="false" aria-controls="stage">3 階行列式</button>
+          <button type="button" role="tab" data-det="minor" aria-selected="false" aria-controls="stage">子行列式和餘因式</button>
+          <button type="button" role="tab" data-det="expand" aria-selected="false" aria-controls="stage">餘因式展式</button>
+          <button type="button" role="tab" data-det="exer11C" aria-selected="false" aria-controls="stage">練習 11C</button>
+          <button type="button" role="tab" data-det="assess11.3" aria-selected="false" aria-controls="stage">階段評估 11.3</button>
         </div>
         <button type="button" class="notes-btn" id="notes-btn" aria-pressed="false" aria-controls="notes">課堂提示</button>
       </div>
@@ -637,18 +686,27 @@ input, textarea { caret-color: var(--accent); }
         <li>1 是一個數，但 (1) 是一個 1×1 矩陣，兩者不同。</li>
         <li>方矩陣的 n 次冪 A<sup>n</sup> 是 n 個 A 相乘。一般來說 (A＋B)<sup>2</sup>≠A<sup>2</sup>＋2AB＋B<sup>2</sup>。</li>
       </ul>
+      <ul id="notes-113" hidden>
+        <li>只有方矩陣才有行列式。A 的行列式記作 |A| 或 det A。這裡的「| |」不是絕對值符號。</li>
+        <li>n×n 矩陣的行列式稱為 n 階行列式。本課程只學 2 階和 3 階；非方矩陣的行列式是未定義的。</li>
+        <li>2 階：|a₁₁ a₁₂；a₂₁ a₂₂|＝a₁₁a₂₂−a₁₂a₂₁。</li>
+        <li>元素 a<sub>ij</sub> 的子行列式 M<sub>ij</sub>，是刪去第 i 行和第 j 列後餘下的行列式。</li>
+        <li>餘因式 A<sub>ij</sub>＝(−1)<sup>i+j</sup> M<sub>ij</sub>。3 階的正負號可記作「＋−＋／−＋−／＋−＋」。</li>
+        <li>餘因式展式：沿第 i 行，|A|＝a<sub>i1</sub>A<sub>i1</sub>＋…＋a<sub>in</sub>A<sub>in</sub>；沿第 j 列亦然。宜從含最多零的行或列展開。</li>
+      </ul>
     </aside>
 
     <nav class="item-bar" id="items" aria-label="題目"></nav>
     <main class="stage" id="stage" role="tabpanel"></main>
 
     <p class="footer">
-      本頁為課堂互動工具，涵蓋矩陣的定義、特殊矩陣、相等性與矩陣的運算，不收集學生資料。
+      本頁為課堂互動工具，涵蓋矩陣的定義、特殊矩陣、相等性、矩陣的運算與行列式，不收集學生資料。
       數學式由 <a href="https://katex.org/" target="_blank" rel="noopener">KaTeX</a>（MIT）排版。馬Sir教室
     </p>
   </div>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
   <script defer src="ops.js"></script>
+  <script defer src="det.js"></script>
   <script defer src="app.js"></script>
 </body>
 </html>

@@ -756,9 +756,13 @@
     document.getElementById("modes-111").hidden = true;
     document.getElementById("modes-112").hidden = true;
     document.getElementById("modes-113").hidden = false;
+    const m114 = document.getElementById("modes-114");
+    if (m114) m114.hidden = true;
     document.getElementById("notes-111").hidden = true;
     document.getElementById("notes-112").hidden = true;
     document.getElementById("notes-113").hidden = false;
+    const n114 = document.getElementById("notes-114");
+    if (n114) n114.hidden = true;
     document.getElementById("brand-sub").textContent = "馬Sir教室 · 中五 M2 · §11.3 行列式";
     document.querySelectorAll("#chapters [data-chapter]").forEach((b) => {
       b.setAttribute("aria-selected", b.getAttribute("data-chapter") === "11.3" ? "true" : "false");

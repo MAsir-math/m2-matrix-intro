@@ -512,15 +512,19 @@
     const m111 = document.getElementById("modes-111");
     const m112 = document.getElementById("modes-112");
     const m113 = document.getElementById("modes-113");
+    const m114 = document.getElementById("modes-114");
     if (m111) m111.hidden = false;
     if (m112) m112.hidden = true;
     if (m113) m113.hidden = true;
+    if (m114) m114.hidden = true;
     const n1 = document.getElementById("notes-111");
     const n2 = document.getElementById("notes-112");
     const n3 = document.getElementById("notes-113");
+    const n4 = document.getElementById("notes-114");
     if (n1) n1.hidden = false;
     if (n2) n2.hidden = true;
     if (n3) n3.hidden = true;
+    if (n4) n4.hidden = true;
     const sub = document.getElementById("brand-sub");
     if (sub) sub.textContent = "馬Sir教室 · 中五 M2 · §11.1 矩陣";
     document.querySelectorAll("#chapters [data-chapter]").forEach((btn) => {
@@ -584,6 +588,12 @@
       state.chapter = "11.1";
       show11_1Chrome();
       setMode("read", "intro", true);
+      return;
+    }
+    if (window.LabInv && window.LabInv.hasHash(raw)) {
+      state.chapter = "11.4";
+      window.LabInv.apply(raw);
+      window.LabInv.render();
       return;
     }
     if (window.LabDet && window.LabDet.hasHash(raw)) {
@@ -1484,6 +1494,10 @@
   }
 
   function render() {
+    if (state.chapter === "11.4" && window.LabInv) {
+      window.LabInv.render();
+      return;
+    }
     if (state.chapter === "11.3" && window.LabDet) {
       window.LabDet.render();
       return;
@@ -1509,7 +1523,11 @@
     document.querySelectorAll("#chapters [data-chapter]").forEach((btn) => {
       btn.addEventListener("click", () => {
         const ch = btn.getAttribute("data-chapter");
-        if (ch === "11.3" && window.LabDet) {
+        if (ch === "11.4" && window.LabInv) {
+          state.chapter = "11.4";
+          window.LabInv.apply("inv");
+          window.LabInv.render();
+        } else if (ch === "11.3" && window.LabDet) {
           state.chapter = "11.3";
           window.LabDet.apply("det");
           window.LabDet.render();
@@ -1541,10 +1559,11 @@
     const start = function () {
       if (window.LabOps) window.LabOps.bind();
       if (window.LabDet) window.LabDet.bind();
+      if (window.LabInv) window.LabInv.bind();
       applyHash();
       if (!location.hash) syncHash();
     };
-    if (window.LabOps || window.LabDet) start();
+    if (window.LabOps || window.LabDet || window.LabInv) start();
     else setTimeout(start, 0);
   }
 

@@ -393,15 +393,116 @@ nearlyN(det3([[2,3,2],[-1,1,9],[1,2,3]]),0);
 nearlyN((-2)**7,-128);
 console.log("§11.3 arithmetic ok");
 
+function ident(n) {
+  return Array.from({ length: n }, (_, i) => Array.from({ length: n }, (_, j) => (i === j ? 1 : 0)));
+}
+function eqM(A, B, msg) {
+  assert.equal(A.length, B.length, msg);
+  for (let i = 0; i < A.length; i++) {
+    assert.equal(A[i].length, B[i].length, msg);
+    for (let j = 0; j < A[i].length; j++) nearlyN(A[i][j], B[i][j], msg);
+  }
+}
+eqM(mul([[3,5],[-1,-2]], [[2,5],[-1,-3]]), ident(2), "intro AB");
+eqM(mul([[2,5],[-1,-3]], [[3,5],[-1,-2]]), ident(2), "intro BA");
+eqM(mul([[8,5],[3,2]], [[2,-5],[-3,8]]), ident(2), "check11.3a");
+eqM(mul([[2,1,2],[-3,0,-1],[-4,-1,-3]], [[1,-1,1],[5,-2,4],[-3,2,-3]]), ident(3), "check11.3c");
+eqM(mul([[7,-2],[-3,1]], [[1,2],[3,7]]), ident(2), "ex11.17 Ainv");
+eqM(mul([[2,-3],[-1,2]], [[2,3],[1,2]]), ident(2), "ex11.17 Binv");
+eqM(mul([[2,3],[1,2]], [[1,2],[3,7]]), [[11,25],[7,16]], "ex11.17 BinvAinv");
+eqM(mul([[1,2],[3,7]], [[2,3],[1,2]]), [[4,7],[13,23]], "ex11.17 AinvBinv");
+eqM(mul([[1,-3],[1,-2]], [[-2,3],[-1,1]]), ident(2), "qp11.17 A");
+eqM(mul([[-5,-3],[2,1]], [[1,3],[-2,-5]]), ident(2), "qp11.17 B");
+eqM(mul([[1,3],[-2,-5]], [[-2,3],[-1,1]]), [[-5,6],[9,-11]], "qp11.17 BinvAinv");
+eqM(mul([[-2,3],[-1,1]], [[1,3],[-2,-5]]), [[-8,-21],[-3,-8]], "qp11.17 AinvBinv");
+eqM(mul([[2,-1],[-5,3]], [[3,1],[5,2]]), ident(2), "extra11.17 A");
+eqM(mul([[4,3],[-3,-2]], [[-2,-3],[3,4]]), ident(2), "extra11.17 B");
+eqM(mul([[-2,-3],[3,4]], [[3,1],[5,2]]), [[-21,-8],[29,11]], "extra11.17 BinvAinv");
+eqM(mul([[3,1],[5,2]], [[-2,-3],[3,4]]), [[-3,-5],[-4,-7]], "extra11.17 AinvBinv");
+eqM(mul([[3,1],[5,2]], [[2,-1],[-5,3]]), ident(2), "ex11.18");
+eqM(mul([[2,-1],[-5,3]], [[2,-1],[-5,3]]), [[9,-5],[-25,14]], "ex11.18 Pinv2");
+eqM(mul([[2,11],[1,5]], [[-5,11],[1,-2]]), ident(2), "qp11.18");
+{
+  const Ainv2 = mul([[-5,11],[1,-2]], [[-5,11],[1,-2]]);
+  eqM(mul(Ainv2, [[-5,11],[1,-2]]), [[-257,550],[50,-107]], "qp11.18 Ainv3");
+}
+eqM(mul([[-3,2],[-2,1]], [[1,-2],[2,-3]]), ident(2), "extra11.18");
+{
+  const M2 = mul([[1,-2],[2,-3]], [[1,-2],[2,-3]]);
+  eqM(mul(M2, M2), [[-7,8],[-8,9]], "extra11.18 M4");
+}
+{
+  const A = [[4,0],[-9,1]];
+  eqM(add(add(mul(A,A), scale(-5,A)), scale(4, ident(2))), [[0,0],[0,0]], "ex11.20 id");
+  eqM(scale(-1/4, add(A, scale(-5, ident(2)))), [[1/4,0],[9/4,1]], "ex11.20 inv");
+}
+{
+  const A = [[2,1],[-3,-1]];
+  eqM(add(add(mul(A,A), scale(-1,A)), ident(2)), [[0,0],[0,0]], "qp11.20a id");
+  eqM(add(ident(2), scale(-1,A)), [[-1,-1],[3,2]], "qp11.20a inv");
+}
+{
+  const B = [[-1,6],[2,-9]];
+  eqM(add(add(mul(B,B), scale(10,B)), scale(-3, ident(2))), [[0,0],[0,0]], "qp11.20b id");
+  eqM(scale(1/3, add(B, scale(10, ident(2)))), [[3,2],[2/3,1/3]], "qp11.20b inv");
+}
+{
+  const P = [[6,3],[-7,-4]];
+  eqM(add(add(mul(P,P), scale(-2,P)), scale(-3, ident(2))), [[0,0],[0,0]], "extra11.20 id");
+  eqM(scale(1/3, add(P, scale(-2, ident(2)))), [[4/3,1],[-7/3,-2]], "extra11.20 inv");
+}
+eqM(mul([[3,-4],[-5,7]], [[7,4],[5,3]]), ident(2), "11D-1");
+eqM(mul([[-2,2,-1],[1,-1,1],[1,0,2]], [[-2,-4,1],[-1,-3,1],[1,2,0]]), ident(3), "11D-2");
+eqM(mul([[4,5],[3,4]], [[4,-5],[-3,4]]), ident(2), "11D-9");
+eqM(mul([[4,-5],[-3,4]], [[4,-5],[-3,4]]), [[31,-40],[-24,31]], "11D-9 A2inv");
+eqM(mul([[1,0],[11,-1]], [[1,0],[11,-1]]), ident(2), "11D-10 A2");
+eqM(mul([[3,-2],[2,1]], [[1,0],[11,-1]]), [[-19,2],[13,-1]], "11D-10 BA");
+eqM(mul([[2,0,1],[2,4,-1],[2,3,-1]], [[1,-3,4],[0,4,-4],[2,6,-8]]), [[4,0,0],[0,4,0],[0,0,4]], "11D-11 AB");
+eqM(scale(1/4, [[1,-3,4],[0,4,-4],[2,6,-8]]), [[1/4,-3/4,1],[0,1,-1],[1/2,3/2,-2]], "11D-11 Ainv");
+eqM(scale(1/4, [[2,0,1],[2,4,-1],[2,3,-1]]), [[1/2,0,1/4],[1/2,1,-1/4],[1/2,3/4,-1/4]], "11D-11 Binv");
+{
+  const A = [[8,-5],[3,-2]];
+  eqM(add(add(mul(A,A), scale(-6,A)), scale(-1, ident(2))), [[0,0],[0,0]], "11D-12 id");
+  eqM(add(A, scale(-6, ident(2))), [[2,-5],[3,-8]], "11D-12 inv");
+}
+{
+  const A = [[3,-1,1],[-1,3,1],[1,1,3]];
+  eqM(add(add(mul(A,A), scale(-5,A)), scale(4, ident(3))), scale(0, ident(3)), "11D-13 id");
+  const invA = scale(1/4, add(scale(5, ident(3)), scale(-1,A)));
+  eqM(invA, [[1/2,1/4,-1/4],[1/4,1/2,-1/4],[-1/4,-1/4,1/2]], "11D-13 inv");
+  eqM(scale(8, invA), [[4,2,-2],[2,4,-2],[-2,-2,4]], "11D-13 8inv");
+}
+{
+  const A = [[0,1,1],[0,2,0],[-2,1,3]];
+  const A2 = mul(A,A), A3 = mul(A2,A);
+  eqM(add(add(add(A3, scale(-5,A2)), scale(8,A)), scale(-4, ident(3))), scale(0, ident(3)), "11D-14");
+}
+{
+  const A = [[-1/2,1/2,1],[3/2,1/2,-1],[0,1,0]];
+  const A2 = mul(A,A);
+  eqM(mul(A,A2), ident(3), "11D-15 A3");
+}
+eqM(mul([[1,2,3],[0,1,-1],[0,0,1]], [[1,-2,-5],[0,1,1],[0,0,1]]), ident(3), "11D-16c");
+eqM(mul([[2,1],[0,5]], [[1/2,-1/10],[0,1/5]]), ident(2), "11D-17 Binv");
+eqM(mul([[2,1],[0,5]], [[2,5/2],[0,-3]]), mul([[2,0],[0,-3]], [[2,1],[0,5]]), "11D-17 BA=CB");
+eqM(mul([[9,1],[8,1]], [[1,-1],[-8,9]]), ident(2), "assess1");
+{
+  const A = [[-5,2],[2,0]];
+  eqM(add(mul(A,A), scale(5,A)), scale(4, ident(2)), "assess3 id");
+  eqM(scale(1/4, add(A, scale(5, ident(2)))), [[0,1/2],[1/2,5/4]], "assess3 inv");
+}
+console.log("§11.4 arithmetic ok");
+
 const publicSrc = readFileSync(new URL("./index.html", import.meta.url), "utf8") +
   readFileSync(new URL("./app.js", import.meta.url), "utf8") +
   readFileSync(new URL("./ops.js", import.meta.url), "utf8") +
   readFileSync(new URL("./det.js", import.meta.url), "utf8") +
+  readFileSync(new URL("./inv.js", import.meta.url), "utf8") +
   readFileSync(new URL("./README.md", import.meta.url), "utf8");
-for (const forbidden of ["逆矩陣", "轉置", "伴隨", "AI=IA", "教師版", "T.28", "T.30", "T.31", "T.32", "T.33", "\u5e42", "\u966a\u96a8"]) {
+for (const forbidden of ["轉置", "伴隨", "AI=IA", "教師版", "教師專用", "T.28", "T.30", "T.31", "T.32", "T.33", "T.34", "T.35", "\u5e42", "\u966a\u96a8"]) {
   assert.equal(publicSrc.includes(forbidden), false, "forbidden: " + forbidden);
 }
-for (const need of ["A 讀矩陣", "B 辨認特殊矩陣", "C 矩陣相等", "加減法", "純量乘法", "矩陣乘法", "矩陣的冪", "練習 11A", "練習 11B", "行列式", "子行列式", "餘因式", "餘因式展式", "練習 11C"]) {
+for (const need of ["A 讀矩陣", "B 辨認特殊矩陣", "C 矩陣相等", "加減法", "純量乘法", "矩陣乘法", "矩陣的冪", "練習 11A", "練習 11B", "行列式", "子行列式", "餘因式", "餘因式展式", "練習 11C", "逆矩陣", "練習 11D", "方矩陣的逆矩陣", "非奇異", "奇異"]) {
   assert.equal(publicSrc.includes(need), true, "missing: " + need);
 }
 
